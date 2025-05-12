@@ -45,7 +45,7 @@ export async function GET() {
 
   for (const interview of interviewData) {
     const exists = await Interview.findOne({
-      link: interview.link, // can add more conditions for robustness
+      link: interview.link, 
     });
 
     if (!exists) {
