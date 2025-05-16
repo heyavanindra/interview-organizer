@@ -3,10 +3,10 @@ import Imap from 'node-imap';
 
 export function connectToImap() {
     return new Imap({
-        user: "heyavanindra@gmail.com",
-        password: "czsxtmcbfhfvvggn",
-        host: "imap.gmail.com",
-        port: 993,
+        user: process.env.IMAP_USER,
+        password: process.env.IMAP_PASSWORD,
+        host: process.env.IMAP_HOST,
+        port: process.env.IMAP_PORT,
         tls: true,
     });
 }
@@ -24,7 +24,7 @@ export function fetchUnreadEmails() {
 
                 imap.search([
                     'UNSEEN',
-                    ['HEADER', 'SUBJECT', 'Interview invitation at Nivesh Jano']
+                    ['HEADER', 'SUBJECT', 'Nivesh']
                 ], (err, results) => {
                     if (err || !results.length) {
                         imap.end();
@@ -37,7 +37,13 @@ export function fetchUnreadEmails() {
                     f.on('message', msg => {
                         msg.on('body', stream => {
                             const parsePromise = simpleParser(stream)
-                                .then(parsed => parsed)
+                                .then(parsed => {
+                                    const subject = parsed.subject?.toLowerCase();
+                                    if (subject && (subject.includes('nivesh jano') || subject.includes('nivesh') || subject.includes('jano'))) {
+                                        return parsed;
+                                    }
+                                    return null;
+                                })
                                 .catch(err => null);
                             parsePromises.push(parsePromise);
                         });

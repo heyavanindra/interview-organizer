@@ -32,6 +32,7 @@ export async function GET() {
     const userData = []
 
     if (data.interviewee !== null && data.interviewer !== null && data.link !== null && data.time !== null) {
+      console.log(data)
       return data
     }
 
@@ -47,6 +48,8 @@ export async function GET() {
     const exists = await Interview.findOne({
       link: interview.link, 
     });
+
+    console.log(exists)
 
     if (!exists) {
       const created = await Interview.create(interview);
